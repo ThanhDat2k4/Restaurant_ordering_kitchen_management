@@ -1,0 +1,54 @@
+.app {
+  max-width: 848px;
+  margin: 80px auto;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+.eyebrow {
+  color: #52685f;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.connection {
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid #d4dfd9;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.status {
+  font-weight: 700;
+}
+
+.status--loading {
+  color: #735316;
+}
+
+.status--success {
+  color: #187044;
+}
+
+.status--error {
+  color: #b42337;
+}
+
+@media (max-width: 480px) {
+  .app {
+    margin: 24px auto;
+    padding: 16px;
+  }
+}
