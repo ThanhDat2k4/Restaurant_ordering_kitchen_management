@@ -1,25 +1,46 @@
-import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import pinoHttp from 'pino-http';
+import { env } from './config/env.js';
+import { logger } from './config/logger.js';
+import { testConnection } from './database/pool.js';
+import { errorHandler, notFoundHandler } from './middlewares/error-handler.js';
 
-dotenv.config()
+const app = express();
 
-const app = express()
-const port = process.env.PORT || 5000
+app.use(helmet());
+app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(cookieParser());
+app.use(pinoHttp({ logger }));
 
-app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
-}))
-app.use(express.json())
-
-app.get('/api/health', (_req, res) => {
-  res.status(200).json({
+// ─── Health check ───
+app.get('/api/v1/health', (req, res) => {
+  res.json({
     success: true,
-    message: 'Restaurant API is running',
+    message: 'Bep Nha Backend is running',
     timestamp: new Date().toISOString(),
-  })
-})
+  });
+});
 
-app.listen(port, () => {
-  console.log(`Backend running at http://localhost:${port}`)
-})
+app.get('/api/v1/health/ready', async (req, res) => {
+  try {
+    const db = await testConnection();
+    res.json({ success: true, db });
+  } catch (err) {
+    res.status(503).json({ success: false, error: { code: 'DB_UNAVAILABLE', message: err.message } });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ROUTES — Sprint 1 sẽ mount /auth, Sprint 2 /menu, ...
+// ═══════════════════════════════════════════════════════════════
+// import authRoutes from './modules/auth/auth.routes.js';
+// app.use('/api/v1/auth', authRoutes);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+export default app;

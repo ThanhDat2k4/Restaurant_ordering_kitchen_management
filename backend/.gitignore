@@ -1,0 +1,29 @@
+# Bảo mật — KHÔNG BAO GIỜ push
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+build/
+coverage/
+
+# Temp
+*.tmp
+tmp/
