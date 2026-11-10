@@ -1,3 +1,5 @@
+import menuRoutes from './modules/menu/menu.routes.js';
+import tableRoutes from './modules/table/table.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import express from 'express';
 import helmet from 'helmet';
@@ -42,6 +44,8 @@ app.get('/api/v1/health/ready', async (req, res) => {
 // app.use('/api/v1/auth', authRoutes);
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/menu', menuRoutes);
+app.use('/api/v1/', tableRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
