@@ -1,3 +1,4 @@
+import authRoutes from './modules/auth/auth.routes.js';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -40,6 +41,7 @@ app.get('/api/v1/health/ready', async (req, res) => {
 // import authRoutes from './modules/auth/auth.routes.js';
 // app.use('/api/v1/auth', authRoutes);
 
+app.use('/api/v1/auth', authRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
