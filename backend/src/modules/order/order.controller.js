@@ -1,0 +1,50 @@
+import * as orderService from './order.service.js';
+import { sendSuccess } from '../../shared/response.js';
+
+export async function createOrder(req, res, next) {
+  try {
+    // Lấy Idempotency-Key từ Header (nếu client gửi)
+    const idempotencyKey = req.headers['idempotency-key'];
+    
+    // Context: Nếu là khách (table token) thì userId = null, ngược lại là nhân viên
+    const ctx = {
+      userId: req.user ? req.user.userId : null,
+    };
+
+    // Nếu là khách, ghi đè ma_ban từ Table Token (không tin body)
+    if (req.table) {
+      req.body.ma_ban = req.table.maBan;
+      req.body.loai_don = 'TAI_BAN'; // Khách chỉ được đặt tại bàn
+    }
+
+    const result = await orderService.createOrder(req.body, ctx, idempotencyKey);
+    sendSuccess(res, result, 201);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOrders(req, res, next) {
+  try {
+    sendSuccess(res, await orderService.getOrders());
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOrderById(req, res, next) {
+  try {
+    sendSuccess(res, await orderService.getOrderById(parseInt(req.params.id)));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function confirmOrder(req, res, next) {
+  try {
+    const result = await orderService.confirmOrder(parseInt(req.params.id), req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) {
+    next(err);
+  }
+}
