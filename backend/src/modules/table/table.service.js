@@ -36,3 +36,17 @@ export async function callStaff(maBan, userId) {
   });
   return { ok: true };
 }
+
+export async function transferOrder(maDonHang, maBanDich, userId) {
+  return await withTx({ userId }, async (client) => {
+    await client.query('SELECT fn_chuyen_ban($1, $2, $3)', [maDonHang, maBanDich, userId]);
+    return { ok: true };
+  });
+}
+
+export async function mergeOrders(maDonNguon, maDonDich, userId) {
+  return await withTx({ userId }, async (client) => {
+    await client.query('SELECT fn_gop_ban($1, $2, $3)', [maDonNguon, maDonDich, userId]);
+    return { ok: true };
+  });
+}

@@ -14,5 +14,7 @@ router.post('/public/table-session/call-staff', authenticateTable, controller.ca
 // NHÂN VIÊN API
 // Đường dẫn: /api/v1/tables/map
 router.get('/tables/map', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.getTableMap);
+router.post('/transfer-order', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.transferOrder);
+router.post('/merge-orders', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.mergeOrders);
 
 export default router;

@@ -21,3 +21,17 @@ export async function callStaff(req, res, next) {
     sendSuccess(res, result);
   } catch (err) { next(err); }
 }
+
+export async function transferOrder(req, res, next) {
+  try {
+    const result = await tableService.transferOrder(req.body.ma_don_hang, req.body.ma_ban_dich, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function mergeOrders(req, res, next) {
+  try {
+    const result = await tableService.mergeOrders(req.body.ma_don_nguon, req.body.ma_don_dich, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
