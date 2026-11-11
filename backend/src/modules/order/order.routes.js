@@ -28,5 +28,11 @@ router.post('/', allowStaffOrGuest, validate(createOrderSchema), controller.crea
 router.get('/', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.getOrders);
 router.get('/:id', authenticate, controller.getOrderById);
 router.post('/:id/confirm', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.confirmOrder);
+router.patch(
+  '/items/:itemId/serve', 
+  authenticate, 
+  authorize('PHUC_VU', 'QUAN_LY'), 
+  controller.serveItem
+);
 
 export default router;

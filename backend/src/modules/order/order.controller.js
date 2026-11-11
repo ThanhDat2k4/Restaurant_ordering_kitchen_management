@@ -48,3 +48,14 @@ export async function confirmOrder(req, res, next) {
     next(err);
   }
 }
+
+// Phục vụ xác nhận món đã ra bàn
+export async function serveItem(req, res, next) {
+  try {
+    const itemId = parseInt(req.params.itemId);
+    const result = await orderService.serveItem(itemId, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) {
+    next(err);
+  }
+}

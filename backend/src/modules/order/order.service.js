@@ -1,3 +1,4 @@
+import { eventBus, EVENTS } from '../../realtime/event-bus.js';
 import crypto from 'node:crypto';
 import { withTx } from '../../database/with-tx.js';
 import { AppError } from '../../shared/app-error.js';
@@ -113,7 +114,8 @@ export async function createOrder(dto, ctx, idempotencyKey) {
 }
 
 export async function confirmOrder(maDonHang, userId) {
-  return await withTx({ userId }, async (client) => {
+  // 1. Chạy transaction và LƯU kết quả vào biến result
+  const result = await withTx({ userId }, async (client) => {
     const { rows: [order] } = await client.query(
       'SELECT * FROM don_hang WHERE ma_don_hang = $1 FOR UPDATE', [maDonHang]
     );
@@ -123,10 +125,44 @@ export async function confirmOrder(maDonHang, userId) {
     }
 
     // Gọi function DB có sẵn: Tách phiếu theo trạm, tự đổi trạng thái đơn
-    const { rows: [result] } = await client.query(
+    const { rows: [res] } = await client.query(
       'SELECT fn_gui_xuong_bep($1) AS so_phieu', [maDonHang]
     );
 
-    return { so_phieu: result.so_phieu };
+    // Trả về thêm ma_don_hang để tí nữa bắn Socket
+    return { so_phieu: res.so_phieu, ma_don_hang: maDonHang };
+  });
+
+  // 2. SAU KHI COMMIT THÀNH CÔNG -> Mới bắn sự kiện Observer (Socket.io)
+  // Nếu so_phieu > 0 tức là có phiếu bếp mới được tạo
+  if (result.so_phieu > 0) {
+    eventBus.emit(EVENTS.KITCHEN_TICKET_CREATED, { 
+      ma_don_hang: result.ma_don_hang 
+    });
+  }
+
+  // 3. Trả kết quả về cho Controller
+  return result;
+}
+
+// Phục vụ xác nhận món đã ra bàn
+export async function serveItem(itemId, userId) {
+  return await withTx({ userId }, async (client) => {
+    const { rows: [item] } = await client.query(
+      'SELECT trang_thai_bep, ma_don_hang, ma_ban FROM chi_tiet_don_hang JOIN don_hang USING(ma_don_hang) WHERE ma_chi_tiet_don_hang = $1',
+      [itemId]
+    );
+    
+    if (!item) throw AppError.notFound('Không tìm thấy món');
+    if (item.trang_thai_bep !== 'DA_XONG') {
+      throw AppError.badRequest('Chỉ món đã nấu xong (DA_XONG) mới được phục vụ');
+    }
+
+    await client.query(
+      "SELECT fn_cap_nhat_trang_thai_mon($1, 'DA_PHUC_VU', $2)",
+      [itemId, userId]
+    );
+    
+    return item;
   });
 }

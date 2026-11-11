@@ -1,3 +1,4 @@
+import { initSocket } from './realtime/socket.js';
 import http from 'node:http';
 import app from './app.js';
 import { env } from './config/env.js';
@@ -16,6 +17,7 @@ async function bootstrap() {
 
   const httpServer = http.createServer(app);
 
+  initSocket(httpServer);
   // Socket.io sẽ gắn ở Sprint 4
   // const { initSocket } = await import('./realtime/socket.js');
   // initSocket(httpServer);

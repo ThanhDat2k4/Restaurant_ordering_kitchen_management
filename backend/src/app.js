@@ -1,3 +1,5 @@
+import kitchenRoutes from './modules/kitchen/kitchen.routes.js';
+import paymentRoutes from './modules/payment/payment.routes.js';
 import orderRoutes from './modules/order/order.routes.js';
 import menuRoutes from './modules/menu/menu.routes.js';
 import tableRoutes from './modules/table/table.routes.js';
@@ -48,6 +50,8 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/menu', menuRoutes);
 app.use('/api/v1', tableRoutes);
 app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/kitchen', kitchenRoutes);
+app.use('/api/v1', paymentRoutes); // Route thanh toán là /api/v1/orders/:id/payments
 
 app.use(notFoundHandler);
 app.use(errorHandler);
