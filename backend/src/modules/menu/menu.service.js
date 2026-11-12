@@ -24,3 +24,14 @@ export async function updateStatus(id, status, userId) {
     return item;
   });
 }
+
+export async function createMenuItem(data, userId) {
+  return await withTx({ userId }, async (client) => {
+    const { rows } = await client.query(
+      `INSERT INTO mon_an (ma_danh_muc, ten_mon_an, don_gia, ma_tram, mo_ta)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [data.ma_danh_muc, data.ten_mon_an, data.don_gia, data.ma_tram || null, data.mo_ta || null]
+    );
+    return rows[0];
+  });
+}

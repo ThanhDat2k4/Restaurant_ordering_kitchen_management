@@ -34,5 +34,9 @@ router.patch(
   authorize('PHUC_VU', 'QUAN_LY'), 
   controller.serveItem
 );
+router.post('/:id/cancel', authenticate, authorize('PHUC_VU', 'QUAN_LY'), controller.cancelOrder);
+router.post('/items/:itemId/cancel', authenticate, authorize('PHUC_VU', 'QUAN_LY', 'DAU_BEP'), controller.cancelItem);
+router.post('/:id/coupons', authenticate, authorize('PHUC_VU', 'QUAN_LY', 'THU_NGAN'), controller.applyCoupon);
+router.delete('/:id/coupons', authenticate, authorize('PHUC_VU', 'QUAN_LY', 'THU_NGAN'), controller.removeCoupon);
 
 export default router;

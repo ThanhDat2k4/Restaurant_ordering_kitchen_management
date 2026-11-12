@@ -19,3 +19,10 @@ export async function updateStatus(req, res, next) {
     sendSuccess(res, result);
   } catch (err) { next(err); }
 }
+
+export async function createMenuItem(req, res, next) {
+  try {
+    const result = await menuService.createMenuItem(req.body, req.user.userId);
+    sendSuccess(res, result, 201);
+  } catch (err) { next(err); }
+}

@@ -7,3 +7,12 @@ export async function pay(req, res, next) {
     sendSuccess(res, result, 201);
   } catch (err) { next(err); }
 }
+
+export async function confirmManual(req, res, next) {
+  try {
+    const result = await PaymentFacade.confirmManualPayment(parseInt(req.params.id), req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { 
+    next(err); 
+  }
+}

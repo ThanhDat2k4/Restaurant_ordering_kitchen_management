@@ -16,8 +16,10 @@ const loginLimiter = rateLimit({
 router.post('/login', loginLimiter, validate(loginSchema), controller.login);
 router.post('/refresh', controller.refresh);
 
-router.use(authenticate); // Các route bên dưới đều cần login
+// Các route bên dưới đều cần login
+router.use(authenticate); 
 router.post('/logout', controller.logout);
 router.get('/me', controller.me);
+router.post('/change-password', authenticate, controller.changePassword);
 
 export default router;

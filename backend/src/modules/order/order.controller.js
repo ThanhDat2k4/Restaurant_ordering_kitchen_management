@@ -59,3 +59,31 @@ export async function serveItem(req, res, next) {
     next(err);
   }
 }
+
+export async function cancelOrder(req, res, next) {
+  try {
+    const result = await orderService.cancelOrder(parseInt(req.params.id), req.body.ly_do, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function cancelItem(req, res, next) {
+  try {
+    const result = await orderService.cancelItem(parseInt(req.params.itemId), req.body.ly_do, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function applyCoupon(req, res, next) {
+  try {
+    const result = await orderService.applyCoupon(parseInt(req.params.id), req.body.code, req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function removeCoupon(req, res, next) {
+  try {
+    const result = await orderService.removeCoupon(parseInt(req.params.id), req.user.userId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}

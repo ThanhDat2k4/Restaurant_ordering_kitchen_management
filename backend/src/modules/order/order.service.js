@@ -166,3 +166,49 @@ export async function serveItem(itemId, userId) {
     return item;
   });
 }
+
+// Lấy danh sách tất cả đơn hàng
+export async function getOrders() {
+  return await repo.getOrders();
+}
+
+// Lấy chi tiết 1 đơn hàng
+export async function getOrderById(maDonHang) {
+  const order = await repo.getOrderById(maDonHang);
+  if (!order) {
+    throw AppError.notFound('Không tìm thấy đơn hàng');
+  }
+  return order;
+}
+
+// Hủy đơn hàng
+export async function cancelOrder(maDonHang, lyDo, userId) {
+  return await withTx({ userId }, async (client) => {
+    // Gọi function DB có sẵn: Hủy đơn, hoàn bàn, hủy các món chưa nấu
+    await client.query('SELECT fn_huy_don_hang($1, $2, $3)', [maDonHang, lyDo, userId]);
+    return { ok: true };
+  });
+}
+
+// Hủy 1 món
+export async function cancelItem(itemId, lyDo, userId) {
+  return await withTx({ userId }, async (client) => {
+    // Gọi function DB có sẵn: Đổi trạng thái món thành DA_HUY
+    await client.query('SELECT fn_cap_nhat_trang_thai_mon($1, $2, $3, $4)', [itemId, 'DA_HUY', userId, lyDo]);
+    return { ok: true };
+  });
+}
+
+export async function applyCoupon(maDonHang, code, userId) {
+  return await withTx({ userId }, async (client) => {
+    const { rows } = await client.query('SELECT fn_ap_dung_ma_giam_gia($1, $2) AS so_tien_giam', [maDonHang, code]);
+    return { so_tien_giam: rows[0].so_tien_giam };
+  });
+}
+
+export async function removeCoupon(maDonHang, userId) {
+  return await withTx({ userId }, async (client) => {
+    await client.query('SELECT fn_go_ma_giam_gia($1)', [maDonHang]);
+    return { ok: true };
+  });
+}

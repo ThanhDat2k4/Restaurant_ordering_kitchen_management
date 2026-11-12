@@ -67,3 +67,10 @@ export async function refresh(req, res, next) {
     next(err);
   }
 }
+
+export async function changePassword(req, res, next) {
+  try {
+    const result = await authService.changePassword(req.user.userId, req.body.mat_khau_cu, req.body.mat_khau_moi);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}

@@ -6,4 +6,6 @@ const router = Router();
 
 router.use(authenticate, authorize('THU_NGAN', 'QUAN_LY', 'PHUC_VU'));
 router.post('/orders/:id/payments', controller.pay);
+router.patch('/payments/:id/confirm', authenticate, authorize('THU_NGAN', 'QUAN_LY'), controller.confirmManual);
+
 export default router;

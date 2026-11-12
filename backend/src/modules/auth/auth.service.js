@@ -159,3 +159,15 @@ export async function refresh({ refreshToken, ip, userAgent }) {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   });
 }
+
+export async function changePassword(userId, matKhauCu, matKhauMoi) {
+  const user = await repo.findUserById(userId);
+  const isMatch = await bcrypt.compare(matKhauCu, user.mat_khau_ma_hoa);
+  if (!isMatch) throw AppError.badRequest('Mật khẩu cũ không đúng');
+
+  const newHash = await bcrypt.hash(matKhauMoi, 12);
+  await withTx({ userId }, async (client) => {
+    await client.query('UPDATE tai_khoan SET mat_khau_ma_hoa = $1 WHERE ma_tai_khoan = $2', [newHash, userId]);
+  });
+  return { ok: true };
+}
