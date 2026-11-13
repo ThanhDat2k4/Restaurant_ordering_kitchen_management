@@ -16,3 +16,14 @@ export async function getBestSellingItems(req, res, next) {
 export async function getKitchenPerformance(req, res, next) {
   try { sendSuccess(res, await reportService.getKitchenPerformance()); } catch (err) { next(err); }
 }
+
+export async function exportRevenueExcel(req, res, next) {
+  try {
+    const buffer = await reportService.generateRevenueExcel();
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="BaoCaoDoanhThu.xlsx"');
+    
+    res.send(buffer);
+  } catch (err) { next(err); }
+}

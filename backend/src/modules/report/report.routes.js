@@ -12,5 +12,6 @@ router.get('/dashboard', controller.getDashboard);
 router.get('/revenue/daily', controller.getRevenueByDay);
 router.get('/best-selling', controller.getBestSellingItems);
 router.get('/kitchen-performance', controller.getKitchenPerformance);
+router.get('/revenue/export', controller.exportRevenueExcel);
 
 export default router;
