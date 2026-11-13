@@ -1,3 +1,6 @@
+import settingRoutes from './modules/setting/setting.routes.js';
+import promotionRoutes from './modules/promotion/promotion.routes.js';
+import auditRoutes from './modules/audit/audit.routes.js';
 import reportRoutes from './modules/report/report.routes.js';
 import kitchenRoutes from './modules/kitchen/kitchen.routes.js';
 import paymentRoutes from './modules/payment/payment.routes.js';
@@ -41,19 +44,16 @@ app.get('/api/v1/health/ready', async (req, res) => {
   }
 });
 
-// ═══════════════════════════════════════════════════════════════
-// ROUTES — Sprint 1 sẽ mount /auth, Sprint 2 /menu, ...
-// ═══════════════════════════════════════════════════════════════
-// import authRoutes from './modules/auth/auth.routes.js';
-// app.use('/api/v1/auth', authRoutes);
-
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/menu', menuRoutes);
 app.use('/api/v1', tableRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/kitchen', kitchenRoutes);
-app.use('/api/v1', paymentRoutes); // Route thanh toán là /api/v1/orders/:id/payments
+app.use('/api/v1', paymentRoutes);
 app.use('/api/v1/reports', reportRoutes);
+app.use('/api/v1/promotions', promotionRoutes);
+app.use('/api/v1/settings', settingRoutes);
+app.use('/api/v1/audit-logs', auditRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
