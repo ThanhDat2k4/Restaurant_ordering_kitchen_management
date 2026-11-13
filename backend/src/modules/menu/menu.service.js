@@ -35,3 +35,14 @@ export async function createMenuItem(data, userId) {
     return rows[0];
   });
 }
+
+export async function updateItemImage(maMonAn, imagePath, userId) {
+  return await withTx({ userId }, async (client) => {
+    const { rows } = await client.query(
+      'UPDATE mon_an SET duong_dan_hinh_anh = $1 WHERE ma_mon_an = $2 RETURNING *',
+      [imagePath, maMonAn]
+    );
+    if (!rows[0]) throw AppError.notFound('Không tìm thấy món ăn');
+    return rows[0];
+  });
+}

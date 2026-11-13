@@ -27,3 +27,6 @@ coverage/
 # Temp
 *.tmp
 tmp/
+
+# Image
+public/uploads/*

@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import settingRoutes from './modules/setting/setting.routes.js';
 import promotionRoutes from './modules/promotion/promotion.routes.js';
 import auditRoutes from './modules/audit/audit.routes.js';
@@ -26,6 +28,9 @@ app.use(express.json({ limit: '2mb' }));
 app.use(cookieParser());
 app.use(pinoHttp({ logger }));
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // ─── Health check ───
 app.get('/api/v1/health', (req, res) => {
   res.json({
@@ -43,6 +48,8 @@ app.get('/api/v1/health/ready', async (req, res) => {
     res.status(503).json({ success: false, error: { code: 'DB_UNAVAILABLE', message: err.message } });
   }
 });
+
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/menu', menuRoutes);
