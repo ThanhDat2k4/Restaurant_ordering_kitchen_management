@@ -21,6 +21,8 @@ async function bootstrap() {
   // Socket.io sẽ gắn ở Sprint 4
   // const { initSocket } = await import('./realtime/socket.js');
   // initSocket(httpServer);
+  const port = process.env.PORT || env.PORT;
+
 
   httpServer.listen(env.PORT, () => {
     logger.info(`Server: http://localhost:${env.PORT}`);

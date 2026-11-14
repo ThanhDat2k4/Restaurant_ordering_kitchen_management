@@ -24,8 +24,29 @@ import { errorHandler, notFoundHandler } from './middlewares/error-handler.js';
 
 const app = express();
 
-app.use(helmet());
-app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  'http://localhost:3000',
+  'http://localhost:5173'
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Cho phép request không có origin (như Postman, mobile app)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // Cho phép load ảnh từ domain khác
+}));
+
 app.use(express.json({ limit: '2mb' }));
 app.use(cookieParser());
 app.use(pinoHttp({ logger }));
