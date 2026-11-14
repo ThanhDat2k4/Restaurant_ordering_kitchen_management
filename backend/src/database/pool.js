@@ -1,11 +1,27 @@
 import pg from 'pg';
 import { env } from '../config/env.js';
 
-export const pool = new pg.Pool({
-  ...env.DB,
-  // Ép PostgreSQL session dùng giờ VN — quan trọng để mã đơn, báo cáo đúng ngày
-  options: '-c timezone=Asia/Ho_Chi_Minh',
-});
+// Cấu hình kết nối
+let poolConfig;
+
+if (env.DATABASE_URL) {
+  // Nếu chạy trên Cloud (Render) hoặc có cấu hình URL
+  poolConfig = {
+    connectionString: env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false } // Bắt buộc cho Render External
+  };
+} else {
+  // Nếu chạy Local
+  poolConfig = {
+    host: env.DB.host,
+    port: env.DB.port,
+    database: env.DB.database,
+    user: env.DB.user,
+    password: env.DB.password,
+  };
+}
+
+export const pool = new pg.Pool(poolConfig);
 
 pool.on('error', (err) => {
   console.error('[pool] Unexpected error:', err);

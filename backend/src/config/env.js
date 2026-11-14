@@ -13,15 +13,16 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: parseInt(process.env.PORT || '5000', 10),
   
+  // Biến DATABASE_URL (Cho Render)
+  DATABASE_URL: process.env.DATABASE_URL, 
+  
+  // Sửa lại phần DB: Dùng process.env thay vì required()
   DB: {
-    host: required('DB_HOST'),
+    host: process.env.DB_HOST, 
     port: parseInt(process.env.DB_PORT || '5432', 10),
-    database: required('DB_NAME'),
-    user: required('DB_USER'),
-    password: required('DB_PASSWORD'),
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   },
   
   JWT: {
