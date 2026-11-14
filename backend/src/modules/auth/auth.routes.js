@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { validate } from '../../middlewares/validate.js'; // (Cần tạo file này - xem bước 3)
+import { validate } from '../../middlewares/validate.js';
 import { authenticate } from '../../middlewares/authenticate.js';
+import { authorize } from '../../middlewares/authorize.js';
 import * as controller from './auth.controller.js';
-import { loginSchema } from './auth.schema.js';
+import { loginSchema, createEmployeeSchema } from './auth.schema.js';
 
 const router = Router();
 
@@ -19,7 +20,9 @@ router.post('/refresh', controller.refresh);
 // Các route bên dưới đều cần login
 router.use(authenticate); 
 router.post('/logout', controller.logout);
-router.get('/me', controller.me);
 router.post('/change-password', authenticate, controller.changePassword);
+router.get('/employees', authorize('QUAN_LY'), controller.getEmployees);
+router.post('/employees', authorize('QUAN_LY'), validate(createEmployeeSchema), controller.createEmployee);
+router.get('/me', controller.me);
 
 export default router;

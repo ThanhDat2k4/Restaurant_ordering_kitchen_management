@@ -1,3 +1,5 @@
+import swaggerUi from 'swagger-ui-express';
+import { readFileSync } from 'fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import settingRoutes from './modules/setting/setting.routes.js';
@@ -30,6 +32,7 @@ app.use(pinoHttp({ logger }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const swaggerDocument = JSON.parse(readFileSync(new URL('../swagger-output.json', import.meta.url)));
 
 // ─── Health check ───
 app.get('/api/v1/health', (req, res) => {
@@ -51,6 +54,7 @@ app.get('/api/v1/health/ready', async (req, res) => {
 
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/menu', menuRoutes);
 app.use('/api/v1', tableRoutes);

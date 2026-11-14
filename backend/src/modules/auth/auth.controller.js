@@ -74,3 +74,22 @@ export async function changePassword(req, res, next) {
     sendSuccess(res, result);
   } catch (err) { next(err); }
 }
+
+export async function createEmployee(req, res, next) {
+  try {
+    const result = await authService.createEmployee(req.body, req.user.userId);
+    sendSuccess(res, result, 201);
+  } catch (err) { 
+    next(err); 
+  }
+}
+
+export async function getEmployees(req, res, next) {
+  try {
+    // Lấy tham số từ URL (Ví dụ: ?role=DAU_BEP&search=Trần&page=1)
+    const result = await authService.getEmployees(req.query);
+    sendSuccess(res, result);
+  } catch (err) { 
+    next(err); 
+  }
+}

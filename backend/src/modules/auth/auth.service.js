@@ -171,3 +171,28 @@ export async function changePassword(userId, matKhauCu, matKhauMoi) {
   });
   return { ok: true };
 }
+
+export async function createEmployee(data, adminId) {
+  // 1. Băm mật khẩu
+  const passwordHash = await bcrypt.hash(data.mat_khau, 12);
+
+  return await withTx({ userId: adminId }, async (client) => {
+    // 2. Tìm ID vai trò
+    const maVaiTro = await repo.getRoleIdByName(data.ma_vai_tro, client);
+    if (!maVaiTro) throw AppError.badRequest('Vai trò không hợp lệ');
+
+    // 3. Tạo tài khoản
+    const user = await repo.insertEmployee(data, passwordHash, maVaiTro, client);
+
+    // 4. Nếu là Đầu bếp, gán vào các trạm chế biến
+    if (data.ma_vai_tro === 'DAU_BEP' && data.ma_tram && data.ma_tram.length > 0) {
+      await repo.assignStations(user.ma_tai_khoan, data.ma_tram, client);
+    }
+
+    return user;
+  });
+}
+
+export async function getEmployees(filters) {
+  return await repo.getEmployeesList(filters);
+}
